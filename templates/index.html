@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Weiss.ai - Celebrity Search</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Weiss.ai</h1>
+        <p>Enter a celebrity's name to get their details:</p>
+        <form id="celebrity-form">
+            <input type="text" id="celebrity-name" placeholder="Celebrity Name" required>
+            <button type="submit">Search</button>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+    <script>
+        document.getElementById('celebrity-form').onsubmit = function(event) {
+            event.preventDefault();
+            const name = document.getElementById('celebrity-name').value;
+            fetch(`/celebrity?name=${name}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('result');
+                    if (data.info.error) {
+                        resultDiv.innerHTML = `<div class="error">${data.info.error}</div>`;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="celebrity-card">
+                                <h2>${data.name}</h2>
+                                <p><strong>Age:</strong> ${data.info.age}</p>
+                                <p><strong>Ethnicity:</strong> ${data.info.ethnicity}</p>
+                            </div>
+                        `;
+                    }
+                });
+        };
+    </script>
+</body>
+</html>
